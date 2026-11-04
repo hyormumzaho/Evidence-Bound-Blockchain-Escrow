@@ -1,0 +1,12 @@
+{
+  "name": "@evidencebound/contracts",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "generate:fixtures": "node script/generate-merkle-fixtures.mjs",
+    "test": "forge test"
+  },
+  "devDependencies": {
+    "@openzeppelin/merkle-tree": "1.0.8"
+  }
+}

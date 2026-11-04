@@ -1,0 +1,11 @@
+{
+  "name": "evidencebound-escrow",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "fixtures": "node packages/contracts/script/generate-merkle-fixtures.mjs",
+    "test:contracts": "forge test --root packages/contracts",
+    "demo": "bash packages/contracts/script/local-demo.sh"
+  }
+}
