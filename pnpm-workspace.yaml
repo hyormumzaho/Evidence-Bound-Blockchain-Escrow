@@ -1,2 +1,8 @@
 packages:
   - "packages/*"
+  - "apps/*"
+allowBuilds:
+  '@tailwindcss/oxide': true
+  better-sqlite3: true
+  esbuild: true
+  sharp: true

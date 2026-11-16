@@ -9,3 +9,12 @@ packages/contracts/out/
 packages/contracts/cache/
 packages/contracts/broadcast/
 packages/contracts/lib/
+
+packages/*/dist/
+
+apps/web/.next/
+apps/web/out/
+apps/web/data/
+
+# Live Anvil deploy addresses (placeholder/example stay tracked under apps/web)
+packages/contracts/deployments/31337.json

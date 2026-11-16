@@ -1,0 +1,1184 @@
+{
+  "contractName": "MerkleRootEscrow",
+  "sourceName": "MerkleRootEscrow.sol",
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "token_",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "fallback",
+      "stateMutability": "payable"
+    },
+    {
+      "type": "receive",
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "BPS_DENOMINATOR",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "EVIDENCE_SCHEMA_VERSION",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint16",
+          "internalType": "uint16"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "FILE_EVIDENCE_TYPE",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "MAX_EVIDENCE_ITEMS",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "MAX_REVISIONS",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "uint8"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "SNAPSHOT_EVIDENCE_TYPE",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "URL_REFERENCE_EVIDENCE_TYPE",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "acceptDelivery",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "approveAgreement",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "agreementHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "cancelUnfunded",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claimMissedDeliveryRefund",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claimReviewTimeout",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "claimable",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "amount",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "createEscrow",
+      "inputs": [
+        {
+          "name": "provider",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "arbitrator",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "deliveryDeadline",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "reviewPeriod",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "revisionDeliveryWindow",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "agreementHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "templateHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "declaredItemCount",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "deliveryVersion",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "deliveryRoot",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "deliveryVersion",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "evidenceMode",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "stateMutability": "pure"
+    },
+    {
+      "type": "function",
+      "name": "fund",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getEscrow",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "view_",
+          "type": "tuple",
+          "internalType": "struct IEscrow.EscrowView",
+          "components": [
+            {
+              "name": "payer",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "provider",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "arbitrator",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "agreementHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "templateHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "deliveryDeadline",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "currentDeliveryDeadline",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "reviewPeriod",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "revisionDeliveryWindow",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "reviewDeadline",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "deliveryVersion",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "revisionsUsed",
+              "type": "uint8",
+              "internalType": "uint8"
+            },
+            {
+              "name": "state",
+              "type": "uint8",
+              "internalType": "enum IEscrow.State"
+            },
+            {
+              "name": "providerApproved",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "hashEvidenceLeaf",
+      "inputs": [
+        {
+          "name": "leaf",
+          "type": "tuple",
+          "internalType": "struct IEscrow.EvidenceLeaf",
+          "components": [
+            {
+              "name": "schemaVersion",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "escrowContract",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "escrowId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deliveryVersion",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "itemIndex",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "evidenceType",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "contentHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "salt",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "stateMutability": "pure"
+    },
+    {
+      "type": "function",
+      "name": "lockedAmount",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "nextEscrowId",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "openDispute",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "reasonHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "requestRevision",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "reasonHash",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "resolveDispute",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "providerBps",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "stateOf",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "enum IEscrow.State"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "submitDelivery",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "root",
+          "type": "bytes32",
+          "internalType": "bytes32"
+        },
+        {
+          "name": "declaredCount",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "token",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "verifyEvidence",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "leaf",
+          "type": "tuple",
+          "internalType": "struct IEscrow.EvidenceLeaf",
+          "components": [
+            {
+              "name": "schemaVersion",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "chainId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "escrowContract",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "escrowId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deliveryVersion",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "itemIndex",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "evidenceType",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "contentHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "salt",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "proof",
+          "type": "bytes32[]",
+          "internalType": "bytes32[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8",
+          "internalType": "enum IEscrow.EvidenceStatus"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "withdraw",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "DeliverySubmitted",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "provider",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "deliveryVersion",
+          "type": "uint32",
+          "indexed": true,
+          "internalType": "uint32"
+        },
+        {
+          "name": "bundleCommitment",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "itemCount",
+          "type": "uint32",
+          "indexed": false,
+          "internalType": "uint32"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "DisputeOpened",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "opener",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "reasonHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "EscrowCancelled",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "payer",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "EscrowCreated",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "payer",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "provider",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "arbitrator",
+          "type": "address",
+          "indexed": false,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "deliveryDeadline",
+          "type": "uint64",
+          "indexed": false,
+          "internalType": "uint64"
+        },
+        {
+          "name": "reviewPeriod",
+          "type": "uint64",
+          "indexed": false,
+          "internalType": "uint64"
+        },
+        {
+          "name": "revisionDeliveryWindow",
+          "type": "uint64",
+          "indexed": false,
+          "internalType": "uint64"
+        },
+        {
+          "name": "agreementHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "templateHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "EscrowFunded",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "payer",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "EscrowSettled",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "settledBy",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "kind",
+          "type": "uint8",
+          "indexed": false,
+          "internalType": "enum IEscrow.SettlementKind"
+        },
+        {
+          "name": "providerBps",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "providerAmount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "payerAmount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "ProviderApproved",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "provider",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "agreementHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "RevisionRequested",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "payer",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "reasonHash",
+          "type": "bytes32",
+          "indexed": false,
+          "internalType": "bytes32"
+        },
+        {
+          "name": "revisionDeliveryDeadline",
+          "type": "uint64",
+          "indexed": false,
+          "internalType": "uint64"
+        },
+        {
+          "name": "revisionsUsed",
+          "type": "uint8",
+          "indexed": false,
+          "internalType": "uint8"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "Withdrawal",
+      "inputs": [
+        {
+          "name": "escrowId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "account",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "error",
+      "name": "AgreementHashMismatch",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "AlreadyApproved",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "AmountTooLarge",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeadlineInPast",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeadlineOverflow",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeliveryAlreadyRecorded",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeliveryDeadlinePassed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeliveryWindowClosed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "DeliveryWindowOpen",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "EtherNotAccepted",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "IncorrectFundingAmount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidBps",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidEvidenceCount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "InvalidState",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "NothingToWithdraw",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ParticipantsNotDistinct",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ProviderNotApproved",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ReentrancyGuardReentrantCall",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ReviewWindowClosed",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ReviewWindowOpen",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "RevisionLimitReached",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "SafeERC20FailedOperation",
+      "inputs": [
+        {
+          "name": "token",
+          "type": "address",
+          "internalType": "address"
+        }
+      ]
+    },
+    {
+      "type": "error",
+      "name": "TokenNotContract",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "Unauthorized",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "UnknownEscrow",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroAddress",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroAmount",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroCommitment",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "ZeroDuration",
+      "inputs": []
+    }
+  ]
+}

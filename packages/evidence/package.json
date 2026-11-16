@@ -1,0 +1,37 @@
+{
+  "name": "@evidencebound/evidence",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo:e2e": "tsx script/e2e-demo.ts"
+  },
+  "dependencies": {
+    "@evidencebound/shared": "workspace:*",
+    "@openzeppelin/merkle-tree": "1.0.8",
+    "canonicalize": "2.1.0",
+    "ethereum-cryptography": "3.2.0"
+  },
+  "devDependencies": {
+    "tsx": "4.20.5",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

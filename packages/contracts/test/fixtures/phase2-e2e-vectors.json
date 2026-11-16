@@ -1,0 +1,73 @@
+{
+  "schema": "evidencebound.phase2-e2e-vectors.v1",
+  "chainId": 31337,
+  "escrowContract": "0x1111111111111111111111111111111111111111",
+  "escrowId": 42,
+  "deliveryVersion": 1,
+  "manifestHash": "0xcbeb2437dc9aa88821e84d46c9b01bb97da84ac62b548ced3f8a4ebb399f3d2a",
+  "root": "0xb02a8214ea44952b614e8ff73ccbf34359ab2bd13cad56148e4f8b4d8785e54d",
+  "declaredItemCount": 3,
+  "individualCommitments": [
+    "0x45e764a2b80a251d8321f3461b6e01ed753a284379223e07a14802cd358752e3",
+    "0x4422e30006feb60ab63913dfc29a3a4af743c9ebc40153059ba2f2e67febd8a8",
+    "0x0a7b97b1f33bf5dbe98abbae61b3bd56f5a3a09e0965b47740c44eda2e280daf"
+  ],
+  "leaves": [
+    {
+      "index": 0,
+      "leafHash": "0x45e764a2b80a251d8321f3461b6e01ed753a284379223e07a14802cd358752e3",
+      "proof": [
+        "0x940aacf549b9a14488d55c79e5bd1e5606091a2f8b59152ec97f1a5eb2624ed4"
+      ],
+      "fields": {
+        "schemaVersion": 1,
+        "chainId": "31337",
+        "escrowContract": "0x1111111111111111111111111111111111111111",
+        "escrowId": "42",
+        "deliveryVersion": 1,
+        "itemIndex": 0,
+        "evidenceType": "0x10a9b21eb5af7d929bc18b1ab4ba59eefd75043ea373d0748b03fc9811b11e80",
+        "contentHash": "0x4d5a4a82177dc81a15ebe5d7398cfa983fadd1cca51f9fc8c528c4d56d48c9c0",
+        "salt": "0x1111111111111111111111111111111111111111111111111111111111111111"
+      }
+    },
+    {
+      "index": 1,
+      "leafHash": "0x4422e30006feb60ab63913dfc29a3a4af743c9ebc40153059ba2f2e67febd8a8",
+      "proof": [
+        "0x0a7b97b1f33bf5dbe98abbae61b3bd56f5a3a09e0965b47740c44eda2e280daf",
+        "0x45e764a2b80a251d8321f3461b6e01ed753a284379223e07a14802cd358752e3"
+      ],
+      "fields": {
+        "schemaVersion": 1,
+        "chainId": "31337",
+        "escrowContract": "0x1111111111111111111111111111111111111111",
+        "escrowId": "42",
+        "deliveryVersion": 1,
+        "itemIndex": 1,
+        "evidenceType": "0x10a9b21eb5af7d929bc18b1ab4ba59eefd75043ea373d0748b03fc9811b11e80",
+        "contentHash": "0x6a308a35eb31c752001bd456d37b582cf96fdb4f9df36ff5ce7f26bfedc57e13",
+        "salt": "0x2222222222222222222222222222222222222222222222222222222222222222"
+      }
+    },
+    {
+      "index": 2,
+      "leafHash": "0x0a7b97b1f33bf5dbe98abbae61b3bd56f5a3a09e0965b47740c44eda2e280daf",
+      "proof": [
+        "0x4422e30006feb60ab63913dfc29a3a4af743c9ebc40153059ba2f2e67febd8a8",
+        "0x45e764a2b80a251d8321f3461b6e01ed753a284379223e07a14802cd358752e3"
+      ],
+      "fields": {
+        "schemaVersion": 1,
+        "chainId": "31337",
+        "escrowContract": "0x1111111111111111111111111111111111111111",
+        "escrowId": "42",
+        "deliveryVersion": 1,
+        "itemIndex": 2,
+        "evidenceType": "0x10a9b21eb5af7d929bc18b1ab4ba59eefd75043ea373d0748b03fc9811b11e80",
+        "contentHash": "0x3073514ccc7798a8c2808c872627ef2d5b6750c0882b1cbc91b43f6e341a6ab3",
+        "salt": "0x3333333333333333333333333333333333333333333333333333333333333333"
+      }
+    }
+  ]
+}

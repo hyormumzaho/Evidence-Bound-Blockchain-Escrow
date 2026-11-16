@@ -1,0 +1,13 @@
+{
+  "schema": "evidencebound.deployments.v1",
+  "chainId": 31337,
+  "rpcUrl": "http://127.0.0.1:8545",
+  "mockUSDC": null,
+  "individualHashEscrow": null,
+  "merkleRootEscrow": null,
+  "payer": null,
+  "mintAmount": null,
+  "deployedAt": null,
+  "blockNumber": null,
+  "note": "Example only. `pnpm deploy:local` writes deployments/31337.json."
+}

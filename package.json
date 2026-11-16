@@ -5,7 +5,18 @@
   "packageManager": "pnpm@12.16.1",
   "scripts": {
     "fixtures": "node packages/contracts/script/generate-merkle-fixtures.mjs",
+    "contracts:abis": "node packages/contracts/script/export-abis.mjs",
+    "deploy:local": "bash packages/contracts/script/deploy-local.sh",
+    "check:chain": "pnpm --filter @evidencebound/web exec node ./scripts/check-chain.mjs",
     "test:contracts": "forge test --root packages/contracts",
+    "test:evidence": "pnpm --filter @evidencebound/evidence test",
+    "test:web": "pnpm --filter @evidencebound/web test",
+    "test": "pnpm test:evidence && pnpm test:contracts && pnpm test:web",
+
+    "build:evidence": "pnpm --filter @evidencebound/shared build && pnpm --filter @evidencebound/evidence build",
+    "build:web": "pnpm build:evidence && pnpm contracts:abis && pnpm --filter @evidencebound/web build",
+    "dev:web": "pnpm --filter @evidencebound/web dev",
+    "demo:evidence": "pnpm --filter @evidencebound/evidence demo:e2e",
     "demo": "bash packages/contracts/script/local-demo.sh"
   }
 }
