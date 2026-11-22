@@ -3,7 +3,7 @@ import { ethAddressSchema } from "./auth";
 
 export const stagingBodySchema = z.object({
   chainId: z.number().int().positive().default(31337),
-  variant: z.enum(["individual", "merkle"]),
+  variant: z.enum(["individual", "manifest", "merkle"]),
   contractAddress: ethAddressSchema,
   payer: ethAddressSchema,
   provider: ethAddressSchema,

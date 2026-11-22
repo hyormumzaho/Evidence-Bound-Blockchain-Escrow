@@ -6,7 +6,7 @@ import {IEscrow} from "../../src/IEscrow.sol";
 import {EscrowBase} from "../../src/EscrowBase.sol";
 import {MockUSDC} from "../../src/MockUSDC.sol";
 
-/// @notice Workflow assertions shared by both escrow variants.
+/// @notice Workflow assertions shared by every escrow variant.
 abstract contract EscrowScenarios is Test {
     uint256 internal constant AMOUNT = 1_000_000_000;
     uint64 internal constant REVIEW_PERIOD = 3 days;

@@ -5,10 +5,12 @@ import {
   type EvidenceExport,
   type EvidenceLeafFields,
   type Hex,
+  type Manifest,
   type VerifyResult,
 } from "@evidencebound/shared";
 import { hashFileBytes, hashSnapshotBytes, hashUrlReference } from "./content.js";
 import { EVIDENCE_TYPE_LABELS } from "@evidencebound/shared";
+import { hashManifest } from "./manifest.js";
 import { hashEvidenceLeaf } from "./leaf.js";
 import { verifyLeafProof } from "./merkle.js";
 import { parseExport } from "./export.js";
@@ -147,6 +149,36 @@ export function verifyExportLeaf(params: {
     return { ok: false, status: EvidenceStatus.NotMember, message: "Content hash mismatch vs manifest" };
   }
 
+  return { ok: true, status: EvidenceStatus.Valid };
+}
+
+/**
+ * Compare a manifest with the hash stored by ManifestHashEscrow.
+ * A missing manifest or a missing chain hash is not an integrity failure.
+ */
+export function verifyManifestCommitment(params: {
+  manifest?: Manifest;
+  storedManifestHash?: Hex;
+}): VerifyResult {
+  if (!params.manifest) {
+    return { ok: false, status: OffchainStatus.ManifestMissing, message: "Manifest missing; not verified" };
+  }
+  if (!params.storedManifestHash) {
+    return {
+      ok: false,
+      status: OffchainStatus.ChainCommitmentUnavailable,
+      message: "Chain manifest hash missing; not verified",
+    };
+  }
+
+  const actual = hashManifest(params.manifest);
+  if (actual !== normalizeHex(params.storedManifestHash)) {
+    return {
+      ok: false,
+      status: OffchainStatus.ManifestIntegrityFailed,
+      message: "Manifest hash does not match the stored commitment",
+    };
+  }
   return { ok: true, status: EvidenceStatus.Valid };
 }
 

@@ -18,7 +18,7 @@ export function createStagingEscrow(
   db: AppDb,
   input: {
     chainId: number;
-    variant: "individual" | "merkle";
+    variant: "individual" | "manifest" | "merkle";
     contractAddress: string;
     payer: string;
     provider: string;

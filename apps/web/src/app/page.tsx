@@ -13,8 +13,7 @@ export default function HomePage() {
         <p className="text-sm tracking-[0.2em] text-[var(--muted)] uppercase">Research prototype</p>
         <h1 className="text-4xl font-semibold tracking-tight text-[var(--fg)]">EvidenceBound Escrow</h1>
         <p className="max-w-2xl text-base leading-relaxed text-[var(--muted)]">
-          Local Web3 UI (Stage 3.8). Full escrow lifecycle: fund, evidence, accept/revision, dispute, timeouts,
-          withdraw. Settlement uses mock tokens only.
+          One escrow room for individual hashes, a canonical manifest hash, or a Merkle root. Mock tokens only.
         </p>
       </header>
 
@@ -25,8 +24,8 @@ export default function HomePage() {
       <EscrowList />
 
       <section className="rounded-2xl border border-dashed border-[var(--border)] p-6 text-sm text-[var(--muted)]">
-        Flow: create → fund → submit evidence → accept / revision / dispute / timeouts → withdraw. Next: Stage
-        3.9 polish / verifier (if planned).
+        Create an agreement, approve it, fund it, submit evidence, then accept or dispute. Measured costs are on
+        the Measurements page after <code>pnpm experiment:small</code>.
       </section>
     </main>
   );

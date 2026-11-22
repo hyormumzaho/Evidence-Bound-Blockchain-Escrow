@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ethAddressSchema } from "./auth";
 
 export const confirmEscrowBodySchema = z.object({
-  variant: z.enum(["individual", "merkle"]),
+  variant: z.enum(["individual", "manifest", "merkle"]),
   txHash: z.string().regex(/^0x[0-9a-fA-F]{64}$/),
   agreement: z.object({
     schema: z.literal("evidencebound.agreement.v1"),

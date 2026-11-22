@@ -83,8 +83,10 @@ interface IEscrow {
     event EscrowFunded(uint256 indexed escrowId, address indexed payer, uint256 amount);
 
     /// @dev `bundleCommitment` is variant-specific and is not file contents.
-    /// IndividualHashEscrow logs keccak256(abi.encode(itemCommitments)).
+    /// IndividualHashEscrow logs keccak256(abi.encode(itemCommitments)). That value is not a Merkle root.
+    /// ManifestHashEscrow logs the canonical manifest hash stored for that delivery.
     /// MerkleRootEscrow logs the Merkle root stored for that delivery.
+    /// ManifestHashEscrow's itemCount is timeline metadata. The hash, not the count, authenticates the manifest.
     event DeliverySubmitted(
         uint256 indexed escrowId,
         address indexed provider,

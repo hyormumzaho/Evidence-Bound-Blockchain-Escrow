@@ -6,7 +6,7 @@ export const escrows = sqliteTable(
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     chainId: integer("chain_id").notNull(),
-    variant: text("variant").notNull(), // individual | merkle
+    variant: text("variant").notNull(), // individual | manifest | merkle
     contractAddress: text("contract_address").notNull(),
     /** null while staging (pre-createEscrow). */
     escrowId: integer("escrow_id"),

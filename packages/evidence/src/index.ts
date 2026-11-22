@@ -19,9 +19,9 @@ export type { BuildManifestInput, ManifestItemInput } from "./manifest.js";
 export { buildAgreement, canonicalizeAgreement, hashAgreement } from "./agreement.js";
 export type { AgreementInput } from "./agreement.js";
 export { buildExport, parseExport, serializeExport, parseExportJson } from "./export.js";
-export { toIndividualSubmit, toMerkleSubmit } from "./submit.js";
-export type { IndividualSubmitPayload, MerkleSubmitPayload } from "./submit.js";
-export { verifyExportLeaf, verifyLeafMembership } from "./verify-offchain.js";
+export { toIndividualSubmit, toManifestSubmit, toMerkleSubmit } from "./submit.js";
+export type { IndividualSubmitPayload, ManifestSubmitPayload, MerkleSubmitPayload } from "./submit.js";
+export { verifyExportLeaf, verifyLeafMembership, verifyManifestCommitment } from "./verify-offchain.js";
 export type { BindingContext, ArtifactInput } from "./verify-offchain.js";
 
 export type {

@@ -1,16 +1,17 @@
 # Research methodology
 
-The research contribution is a working escrow protocol and a controlled comparison of two evidence representations. It is not a new hash function, a new tree, or an Evidence Epoch Forest.
+The research contribution is a working escrow protocol and a controlled comparison of evidence representations. It is not a new hash function, a new tree, or an Evidence Epoch Forest.
 
 ## Variants
 
-| | IndividualHashEscrow | MerkleRootEscrow |
-| --- | --- | --- |
-| Delivery storage | Ordered list of standard leaf hashes | One standard Merkle root, plus a declared count |
-| Verification | Compare the recomputed leaf with the stored slot | `MerkleProof` against the stored root |
-| Shared | Roles, states, deadlines, token, approval, settlement, events, compiler, optimizer, EVM | Same |
+| | IndividualHashEscrow | ManifestHashEscrow | MerkleRootEscrow |
+| --- | --- | --- | --- |
+| Delivery storage | Ordered list of standard leaf hashes | One keccak256 of the canonical manifest | One standard Merkle root, plus a declared count |
+| Verification | Compare the recomputed leaf with the stored slot | Recompute the manifest hash and compare it with the stored hash. Item bytes are checked from the manifest off-chain | `MerkleProof` against the stored root |
+| What it does not provide | A compact inclusion proof | Selective on-chain membership | A commitment to manifest metadata that is outside the leaves |
+| Shared | Roles, states, deadlines, token, approval, settlement, compiler, optimizer, EVM | Same | Same |
 
-Only evidence storage and the verification inputs should differ. Settlement tests run the same workflow on both and compare withdrawn amounts.
+Only evidence storage and the verification inputs should differ. Settlement tests run the same workflow on all three and compare withdrawn amounts. The manifest variant's event `itemCount` is not an authenticated size. Compare manifest-hash cost with the other variants only for workloads that do not require an on-chain inclusion proof.
 
 ## Metrics
 
@@ -49,7 +50,7 @@ The Foundry tests already cover the correctness cases. Phase 4 turns the gas and
 
 ## Fairness constraints
 
-Both variants compile in one Foundry profile:
+All three contracts compile in one Foundry profile:
 
 ```text
 solc 0.8.38

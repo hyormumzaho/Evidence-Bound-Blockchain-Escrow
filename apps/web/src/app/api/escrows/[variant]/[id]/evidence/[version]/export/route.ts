@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { getDeliveryForExport } from "@/lib/evidence/persist";
 import { jsonError, requireSession, statusFromError } from "@/lib/http";
-import type { EscrowVariant } from "@/lib/chain/abis";
+import { isEscrowVariant } from "@/lib/chain/abis";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -16,10 +16,10 @@ type Ctx = { params: Promise<{ variant: string; id: string; version: string }> }
 export async function GET(request: Request, ctx: Ctx) {
   try {
     const { variant: variantRaw, id: idRaw, version: versionRaw } = await ctx.params;
-    if (variantRaw !== "individual" && variantRaw !== "merkle") {
+    if (!isEscrowVariant(variantRaw)) {
       return jsonError("Invalid variant", 400);
     }
-    const variant = variantRaw as EscrowVariant;
+    const variant = variantRaw;
     const escrowId = Number(idRaw);
     const deliveryVersion = Number(versionRaw);
     if (!Number.isInteger(escrowId) || escrowId <= 0) {

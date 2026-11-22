@@ -53,6 +53,10 @@ See `docs/protocol-spec.md`. The ones most likely to be questioned:
 - Rounding remainder goes to the payer.
 - Agreement hash omits the escrow id and includes a nonce and the contract address.
 
+## Research extension after the teammate baseline
+
+The baseline at `99534ea` has two on-chain strategies and an off-chain manifest hash. The comparison question needs the manifest hash as its own contract. `ManifestHashEscrow` stores that hash and shares `EscrowBase`. The web UI, experiment runner, and independent verifier still follow this plan. Historical phase reports describe the two-variant UI and are left as records of that work.
+
 ## Open items
 
 - Which RFC 8785 package to pin in Phase 2. The algorithm is decided. The dependency is not, until its tests pass.

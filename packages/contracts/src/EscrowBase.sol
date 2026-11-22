@@ -7,9 +7,9 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {IEscrow} from "./IEscrow.sol";
 import {EvidenceCommitment} from "./EvidenceCommitment.sol";
 
-/// @notice Escrow rules shared by the individual-hash and Merkle-root variants.
+/// @notice Escrow rules shared by the individual-hash, manifest-hash, and Merkle-root variants.
 /// @dev Evidence storage is the only behavior subclasses add. Settlement, deadlines, roles,
-/// and accounting are defined here so the two variants cannot drift.
+/// and accounting are defined here so the variants cannot drift.
 abstract contract EscrowBase is ReentrancyGuard, IEscrow {
     using SafeERC20 for IERC20;
 

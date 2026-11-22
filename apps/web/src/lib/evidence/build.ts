@@ -5,10 +5,12 @@ import {
   hashUrlReference,
   randomSalt,
   toIndividualSubmit,
+  toManifestSubmit,
   toMerkleSubmit,
   type EvidenceExport,
 } from "@evidencebound/evidence";
 import { EVIDENCE_TYPE_LABELS, MAX_EVIDENCE_ITEMS } from "@evidencebound/shared";
+import type { EscrowVariant } from "@/lib/chain/abis";
 import type { Address, Hex } from "viem";
 import { encodeAbiParameters, keccak256 } from "viem";
 
@@ -96,11 +98,23 @@ export function buildDeliveryExport(input: {
   return buildExport(manifest);
 }
 
-export function submitPayloadForVariant(evidenceExport: EvidenceExport, variant: "individual" | "merkle") {
+export function submitPayloadForVariant(evidenceExport: EvidenceExport, variant: EscrowVariant) {
   if (variant === "individual") {
     return { kind: "individual" as const, ...toIndividualSubmit(evidenceExport) };
   }
+  if (variant === "manifest") {
+    return { kind: "manifest" as const, ...toManifestSubmit(evidenceExport) };
+  }
   return { kind: "merkle" as const, ...toMerkleSubmit(evidenceExport) };
+}
+
+export type SubmitPayload = ReturnType<typeof submitPayloadForVariant>;
+
+/** Value logged as DeliverySubmitted.bundleCommitment for this payload. */
+export function bundleCommitmentForPayload(payload: SubmitPayload): Hex {
+  if (payload.kind === "individual") return individualBundleCommitment(payload.commitments);
+  if (payload.kind === "manifest") return payload.manifestHash;
+  return payload.root;
 }
 
 /** Matches IndividualHashEscrow event bundleCommitment = keccak256(abi.encode(commitments)). */

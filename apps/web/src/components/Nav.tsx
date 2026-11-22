@@ -9,6 +9,12 @@ export function Nav() {
       <Link className="text-[var(--accent)] underline-offset-4 hover:underline" href="/create">
         Create escrow
       </Link>
+      <Link className="text-[var(--accent)] underline-offset-4 hover:underline" href="/verifier">
+        Verifier
+      </Link>
+      <Link className="text-[var(--accent)] underline-offset-4 hover:underline" href="/research">
+        Measurements
+      </Link>
     </nav>
   );
 }

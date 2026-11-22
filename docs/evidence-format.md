@@ -90,6 +90,8 @@ Export envelope, schema `evidencebound.evidence-export.v1`, is a separate object
 
 The individual-hash variant does not need proofs, but the export still carries the leaf hashes so a checker can compare them to `commitmentAt`.
 
+`ManifestHashEscrow` stores `manifestHash` and nothing else about the items. Verification recomputes `hashManifest` and compares it with `deliveryManifestHash` read from the chain. A matching hash then lets the checker hash each artifact and compare it with the manifest entry. That is not a Merkle inclusion proof. A missing manifest is `ManifestMissing`, not an integrity failure. A missing chain hash is `ChainCommitmentUnavailable`. A present manifest whose hash differs is `ManifestIntegrityFailed`.
+
 ## Merkle tree
 
 Use `StandardMerkleTree.of` with the default `sortLeaves: true`. Do not implement a second hashing scheme. Internal nodes are sorted-pair Keccak, matching `MerkleProof` in OpenZeppelin Contracts 5.7.

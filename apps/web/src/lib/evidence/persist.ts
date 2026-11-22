@@ -9,7 +9,7 @@ import { EVIDENCE_TYPE_LABELS } from "@evidencebound/shared";
 import { hashFileBytes, hashUrlReference, serializeExport } from "@evidencebound/evidence";
 import type { AppDb } from "@/lib/db/client";
 import { evidenceDeliveries, evidenceItems, escrows, files } from "@/lib/db/schema";
-import { getDeploymentAddresses } from "@/lib/chain/addresses";
+import { addressForVariant } from "@/lib/chain/addresses";
 import { escrowAbi, type EscrowVariant } from "@/lib/chain/abis";
 import { createAnvilPublicClient } from "@/lib/chain/client";
 import { ANVIL_CHAIN_ID } from "@/lib/chain/config";
@@ -17,7 +17,7 @@ import { readUploadBytes } from "@/lib/storage/files";
 import { isParticipant } from "@/lib/auth/access";
 import {
   buildDeliveryExport,
-  individualBundleCommitment,
+  bundleCommitmentForPayload,
   submitPayloadForVariant,
   type DraftEvidenceItem,
 } from "./build";
@@ -49,8 +49,7 @@ export type ConfirmDeliveryResult = {
 };
 
 function contractForVariant(variant: EscrowVariant): Address {
-  const addresses = getDeploymentAddresses();
-  const addr = variant === "individual" ? addresses.individualHashEscrow : addresses.merkleRootEscrow;
+  const addr = addressForVariant(variant);
   if (!addr) {
     throw Object.assign(new Error("Escrow contract address not configured"), { status: 503 });
   }
@@ -234,10 +233,7 @@ export async function confirmDeliverySubmission(
   });
 
   const payload = submitPayloadForVariant(evidenceExport, input.variant);
-  const expectedBundle: Hex =
-    payload.kind === "individual"
-      ? individualBundleCommitment(payload.commitments)
-      : payload.root;
+  const expectedBundle = bundleCommitmentForPayload(payload);
 
   if (expectedBundle.toLowerCase() !== submitted.bundleCommitment.toLowerCase()) {
     throw Object.assign(

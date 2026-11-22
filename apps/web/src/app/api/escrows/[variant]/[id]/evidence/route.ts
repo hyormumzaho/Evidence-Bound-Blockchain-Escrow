@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/client";
 import { getEscrowRoom } from "@/lib/escrow/persist";
 import { listDeliveriesForEscrow } from "@/lib/evidence/persist";
 import { jsonError, requireSession, statusFromError } from "@/lib/http";
-import type { EscrowVariant } from "@/lib/chain/abis";
+import { isEscrowVariant } from "@/lib/chain/abis";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -14,10 +14,10 @@ type Ctx = { params: Promise<{ variant: string; id: string }> };
 export async function GET(request: Request, ctx: Ctx) {
   try {
     const { variant: variantRaw, id: idRaw } = await ctx.params;
-    if (variantRaw !== "individual" && variantRaw !== "merkle") {
+    if (!isEscrowVariant(variantRaw)) {
       return jsonError("Invalid variant", 400);
     }
-    const variant = variantRaw as EscrowVariant;
+    const variant = variantRaw;
     const escrowId = Number(idRaw);
     if (!Number.isInteger(escrowId) || escrowId <= 0) {
       return jsonError("Invalid escrow id", 400);

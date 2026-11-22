@@ -17,6 +17,8 @@
     "build:web": "pnpm build:evidence && pnpm contracts:abis && pnpm --filter @evidencebound/web build",
     "dev:web": "pnpm --filter @evidencebound/web dev",
     "demo:evidence": "pnpm --filter @evidencebound/evidence demo:e2e",
-    "demo": "bash packages/contracts/script/local-demo.sh"
+    "demo": "bash packages/contracts/script/local-demo.sh",
+    "experiment:small": "pnpm --filter @evidencebound/evidence exec tsx ../../experiments/scripts/run-suite.ts small",
+    "experiment:full": "pnpm --filter @evidencebound/evidence exec tsx ../../experiments/scripts/run-suite.ts full"
   }
 }

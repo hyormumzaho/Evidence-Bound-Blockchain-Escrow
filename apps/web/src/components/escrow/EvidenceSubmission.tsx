@@ -240,21 +240,19 @@ export function EvidenceSubmission({
     setPendingExport(preview.evidenceExport);
     setPendingConfirmItems(itemsToConfirmPayload(items));
     try {
-      if (preview.payload.kind === "individual") {
-        await writeContractAsync({
-          address: escrowAddress,
-          abi: escrowAbi(variant),
-          functionName: "submitDelivery",
-          args: [escrowId, preview.payload.commitments],
-        });
-      } else {
-        await writeContractAsync({
-          address: escrowAddress,
-          abi: escrowAbi(variant),
-          functionName: "submitDelivery",
-          args: [escrowId, preview.payload.root, preview.payload.declaredCount],
-        });
-      }
+      const payload = preview.payload;
+      const args =
+        payload.kind === "individual"
+          ? ([escrowId, payload.commitments] as const)
+          : payload.kind === "manifest"
+            ? ([escrowId, payload.manifestHash, payload.itemCount] as const)
+            : ([escrowId, payload.root, payload.declaredCount] as const);
+      await writeContractAsync({
+        address: escrowAddress,
+        abi: escrowAbi(variant),
+        functionName: "submitDelivery",
+        args,
+      });
     } catch (err) {
       setPendingExport(null);
       setPendingConfirmItems([]);
@@ -423,6 +421,13 @@ export function EvidenceSubmission({
             <div className="rounded-xl border border-[var(--border)] bg-[#f7fafb] p-3 text-xs font-mono break-all">
               {preview.payload.kind === "individual" ? (
                 <p>commitments[{preview.payload.commitments.length}] ready for submitDelivery</p>
+              ) : preview.payload.kind === "manifest" ? (
+                <>
+                  <p>manifestHash {preview.payload.manifestHash}</p>
+                  <p className="mt-1 text-[var(--muted)]">
+                    itemCount {preview.payload.itemCount} (event metadata only — not authenticated by the hash)
+                  </p>
+                </>
               ) : (
                 <>
                   <p>merkleRoot {preview.payload.root}</p>
@@ -445,7 +450,7 @@ export function EvidenceSubmission({
               onClick={() => void onSubmitDelivery()}
               className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              Submit delivery (MetaMask)
+              Submit delivery
             </button>
             {receipt.isSuccess && pendingConfirmItems.length > 0 && localError && (
               <button

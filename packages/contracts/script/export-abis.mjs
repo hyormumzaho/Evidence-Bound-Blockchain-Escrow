@@ -15,6 +15,7 @@ const repoRoot = join(contractsRoot, "../..");
 const contracts = [
   { artifact: "MockUSDC.sol/MockUSDC.json", name: "MockUSDC" },
   { artifact: "IndividualHashEscrow.sol/IndividualHashEscrow.json", name: "IndividualHashEscrow" },
+  { artifact: "ManifestHashEscrow.sol/ManifestHashEscrow.json", name: "ManifestHashEscrow" },
   { artifact: "MerkleRootEscrow.sol/MerkleRootEscrow.json", name: "MerkleRootEscrow" },
 ];
 

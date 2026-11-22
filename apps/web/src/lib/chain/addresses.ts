@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { Address } from "viem";
 import { isAddress } from "viem";
 import bundledDeployment from "./deployments/31337.json";
+import type { EscrowVariant } from "./abis";
 import { ANVIL_CHAIN_ID } from "./config";
 
 export type DeploymentAddresses = {
@@ -10,6 +11,7 @@ export type DeploymentAddresses = {
   rpcUrl: string;
   mockUSDC: Address | null;
   individualHashEscrow: Address | null;
+  manifestHashEscrow: Address | null;
   merkleRootEscrow: Address | null;
   payer: Address | null;
   mintAmount: string | null;
@@ -22,6 +24,7 @@ type DeploymentFile = {
   rpcUrl?: string;
   mockUSDC?: string | null;
   individualHashEscrow?: string | null;
+  manifestHashEscrow?: string | null;
   merkleRootEscrow?: string | null;
   payer?: string | null;
   mintAmount?: string | null;
@@ -85,6 +88,9 @@ export function getDeploymentAddresses(): DeploymentAddresses {
     individualHashEscrow:
       fromEnv("NEXT_PUBLIC_INDIVIDUAL_ESCROW") ??
       optionalAddress(file.individualHashEscrow, "individualHashEscrow"),
+    manifestHashEscrow:
+      fromEnv("NEXT_PUBLIC_MANIFEST_ESCROW") ??
+      optionalAddress(file.manifestHashEscrow, "manifestHashEscrow"),
     merkleRootEscrow:
       fromEnv("NEXT_PUBLIC_MERKLE_ESCROW") ?? optionalAddress(file.merkleRootEscrow, "merkleRootEscrow"),
     payer: optionalAddress(file.payer, "payer"),
@@ -92,6 +98,13 @@ export function getDeploymentAddresses(): DeploymentAddresses {
     deployedAt: file.deployedAt ?? null,
     blockNumber: file.blockNumber ?? null,
   };
+}
+
+export function addressForVariant(variant: EscrowVariant): Address | null {
+  const addresses = getDeploymentAddresses();
+  if (variant === "individual") return addresses.individualHashEscrow;
+  if (variant === "manifest") return addresses.manifestHashEscrow;
+  return addresses.merkleRootEscrow;
 }
 
 export function requireAddress(value: Address | null, label: string): Address {

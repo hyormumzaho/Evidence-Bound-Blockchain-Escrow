@@ -4,7 +4,7 @@ import { and, desc, eq, or } from "drizzle-orm";
 import { getAddress, type Address, type Hex } from "viem";
 import type { AppDb } from "@/lib/db/client";
 import { agreements, escrows } from "@/lib/db/schema";
-import { getDeploymentAddresses } from "@/lib/chain/addresses";
+import { addressForVariant } from "@/lib/chain/addresses";
 import { escrowAbi, type EscrowVariant } from "@/lib/chain/abis";
 import { createAnvilPublicClient } from "@/lib/chain/client";
 import { ANVIL_CHAIN_ID } from "@/lib/chain/config";
@@ -21,8 +21,7 @@ export type PersistEscrowResult = {
 };
 
 function contractForVariant(variant: EscrowVariant): Address {
-  const addresses = getDeploymentAddresses();
-  const addr = variant === "individual" ? addresses.individualHashEscrow : addresses.merkleRootEscrow;
+  const addr = addressForVariant(variant);
   if (!addr) {
     throw Object.assign(new Error("Escrow contract address not configured"), { status: 503 });
   }

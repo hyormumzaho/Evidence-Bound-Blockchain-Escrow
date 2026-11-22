@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Local Anvil workflow for one acceptance on each escrow variant.
+# Local Anvil workflow for one acceptance on each of the three escrow variants.
 # Refuses every chain id other than 31337.
 set -euo pipefail
 
@@ -10,9 +10,9 @@ REVIEW=259200
 REVISION=172800
 MINT_AMOUNT="${MINT_AMOUNT:-1000000000000}"
 
-for tool in forge cast python3; do
+for tool in forge cast python3 node; do
   if ! command -v "$tool" >/dev/null 2>&1; then
-    echo "Missing $tool. Install Foundry (forge and cast) and Python 3, then retry." >&2
+    echo "Missing $tool. Install Foundry (forge and cast), Python 3, and Node, then retry." >&2
     exit 1
   fi
 done
@@ -38,8 +38,15 @@ PROVIDER_ADDRESS="$(cast wallet address --private-key "$PROVIDER_PRIVATE_KEY")"
 ARBITRATOR_ADDRESS="$(cast wallet address --private-key "$ARBITRATOR_PRIVATE_KEY")"
 export PRIVATE_KEY PAYER_ADDRESS MINT_AMOUNT
 
+REPO="$(cd "$ROOT/../.." && pwd)"
+TSX="$REPO/node_modules/.bin/tsx"
+if [[ ! -x "$TSX" ]]; then
+  echo "Missing $TSX. From the repository root run: pnpm install" >&2
+  exit 1
+fi
+
 echo "Prototype only. Mock mUSDC on Anvil. This does not move real funds."
-echo "Deploying MockUSDC and both escrow variants..."
+echo "Deploying MockUSDC and the three escrow variants..."
 cd "$ROOT"
 
 OUTPUT="$(
@@ -58,8 +65,9 @@ extract() {
 
 TOKEN="$(extract MockUSDC)"
 INDIVIDUAL="$(extract IndividualHashEscrow)"
+MANIFEST="$(extract ManifestHashEscrow)"
 MERKLE="$(extract MerkleRootEscrow)"
-if [[ -z "$TOKEN" || -z "$INDIVIDUAL" || -z "$MERKLE" ]]; then
+if [[ -z "$TOKEN" || -z "$INDIVIDUAL" || -z "$MANIFEST" || -z "$MERKLE" ]]; then
   echo "Could not read deployed addresses from forge script output." >&2
   exit 1
 fi
@@ -105,24 +113,37 @@ run_variant() {
       --rpc-url "$RPC_URL" | awk '{print $1}'
   )"
 
+  local status
   if [[ "$mode" == "individual" ]]; then
     cast send "$escrow" "submitDelivery(uint256,bytes32[])" "$id" "[${leaf}]" \
       --rpc-url "$RPC_URL" --private-key "$PROVIDER_PRIVATE_KEY" >/dev/null
-    local status
     status="$(
       cast call "$escrow" \
         "verifyEvidence(uint256,(uint16,uint256,address,uint256,uint32,uint32,bytes32,bytes32,bytes32))(uint8)" \
         "$id" "(1,${CHAIN},${escrow},${id},1,0,${file_type},${CONTENT},${SALT})" \
         --rpc-url "$RPC_URL" | awk '{print $1}'
     )"
-  else
+  elif [[ "$mode" == "merkle" ]]; then
     cast send "$escrow" "submitDelivery(uint256,bytes32,uint32)" "$id" "$leaf" 1 \
       --rpc-url "$RPC_URL" --private-key "$PROVIDER_PRIVATE_KEY" >/dev/null
-    local status
     status="$(
       cast call "$escrow" \
         "verifyEvidence(uint256,(uint16,uint256,address,uint256,uint32,uint32,bytes32,bytes32,bytes32),bytes32[])(uint8)" \
         "$id" "(1,${CHAIN},${escrow},${id},1,0,${file_type},${CONTENT},${SALT})" "[]" \
+        --rpc-url "$RPC_URL" | awk '{print $1}'
+    )"
+  else
+    local manifest_hash
+    manifest_hash="$(
+      "$TSX" "$REPO/packages/evidence/script/print-manifest-hash.ts" \
+        "$CHAIN" "$escrow" "$id" 1 "$CONTENT" "$SALT" "0123456789abcdef0123456789abcdef" 15
+    )"
+    cast send "$escrow" "submitDelivery(uint256,bytes32,uint32)" "$id" "$manifest_hash" 1 \
+      --rpc-url "$RPC_URL" --private-key "$PROVIDER_PRIVATE_KEY" >/dev/null
+    status="$(
+      cast call "$escrow" \
+        "verifyManifestHash(uint256,uint32,bytes32)(uint8)" \
+        "$id" 1 "$manifest_hash" \
         --rpc-url "$RPC_URL" | awk '{print $1}'
     )"
   fi
@@ -149,9 +170,11 @@ run_variant() {
 }
 
 run_variant "IndividualHashEscrow" "$INDIVIDUAL" "individual"
+run_variant "ManifestHashEscrow" "$MANIFEST" "manifest"
 run_variant "MerkleRootEscrow" "$MERKLE" "merkle"
 echo
 echo "Demo complete."
 echo "MockUSDC $TOKEN"
 echo "IndividualHashEscrow $INDIVIDUAL"
+echo "ManifestHashEscrow $MANIFEST"
 echo "MerkleRootEscrow $MERKLE"

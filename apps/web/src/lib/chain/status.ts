@@ -15,17 +15,22 @@ export type ChainStatus = {
   addresses: {
     mockUSDC: `0x${string}` | null;
     individualHashEscrow: `0x${string}` | null;
+    manifestHashEscrow: `0x${string}` | null;
     merkleRootEscrow: `0x${string}` | null;
   };
   bytecode: {
     mockUSDC: boolean;
     individualHashEscrow: boolean;
+    manifestHashEscrow: boolean;
     merkleRootEscrow: boolean;
   };
   reads: {
     individualToken: string | null;
     individualNextEscrowId: string | null;
     individualEvidenceMode: string | null;
+    manifestToken: string | null;
+    manifestNextEscrowId: string | null;
+    manifestEvidenceMode: string | null;
     merkleToken: string | null;
     merkleNextEscrowId: string | null;
     merkleEvidenceMode: string | null;
@@ -56,22 +61,30 @@ export async function getChainStatus(): Promise<ChainStatus> {
     rpcReachable: false,
     chainIdMatch: false,
     addressesConfigured: Boolean(
-      addresses.mockUSDC && addresses.individualHashEscrow && addresses.merkleRootEscrow,
+      addresses.mockUSDC &&
+        addresses.individualHashEscrow &&
+        addresses.manifestHashEscrow &&
+        addresses.merkleRootEscrow,
     ),
     addresses: {
       mockUSDC: addresses.mockUSDC,
       individualHashEscrow: addresses.individualHashEscrow,
+      manifestHashEscrow: addresses.manifestHashEscrow,
       merkleRootEscrow: addresses.merkleRootEscrow,
     },
     bytecode: {
       mockUSDC: false,
       individualHashEscrow: false,
+      manifestHashEscrow: false,
       merkleRootEscrow: false,
     },
     reads: {
       individualToken: null,
       individualNextEscrowId: null,
       individualEvidenceMode: null,
+      manifestToken: null,
+      manifestNextEscrowId: null,
+      manifestEvidenceMode: null,
       merkleToken: null,
       merkleNextEscrowId: null,
       merkleEvidenceMode: null,
@@ -105,11 +118,15 @@ export async function getChainStatus(): Promise<ChainStatus> {
   try {
     status.bytecode.mockUSDC = await hasCode(client, addresses.mockUSDC);
     status.bytecode.individualHashEscrow = await hasCode(client, addresses.individualHashEscrow);
+    status.bytecode.manifestHashEscrow = await hasCode(client, addresses.manifestHashEscrow);
     status.bytecode.merkleRootEscrow = await hasCode(client, addresses.merkleRootEscrow);
     if (status.addressesConfigured) {
       if (!status.bytecode.mockUSDC) errors.push("MockUSDC has no bytecode at configured address.");
       if (!status.bytecode.individualHashEscrow) {
         errors.push("IndividualHashEscrow has no bytecode at configured address.");
+      }
+      if (!status.bytecode.manifestHashEscrow) {
+        errors.push("ManifestHashEscrow has no bytecode at configured address.");
       }
       if (!status.bytecode.merkleRootEscrow) {
         errors.push("MerkleRootEscrow has no bytecode at configured address.");
@@ -134,6 +151,21 @@ export async function getChainStatus(): Promise<ChainStatus> {
     }
   }
 
+  if (status.addressesConfigured && status.bytecode.manifestHashEscrow) {
+    try {
+      const [token, nextId, mode] = await Promise.all([
+        readTokenAddress("manifest", client),
+        readNextEscrowId("manifest", client),
+        readEvidenceMode("manifest", client),
+      ]);
+      status.reads.manifestToken = token;
+      status.reads.manifestNextEscrowId = nextId.toString(10);
+      status.reads.manifestEvidenceMode = mode;
+    } catch (err) {
+      errors.push(err instanceof Error ? `Manifest reads: ${err.message}` : "Manifest reads failed");
+    }
+  }
+
   if (status.addressesConfigured && status.bytecode.merkleRootEscrow) {
     try {
       const [token, nextId, mode] = await Promise.all([
@@ -155,8 +187,10 @@ export async function getChainStatus(): Promise<ChainStatus> {
     status.addressesConfigured &&
     status.bytecode.mockUSDC &&
     status.bytecode.individualHashEscrow &&
+    status.bytecode.manifestHashEscrow &&
     status.bytecode.merkleRootEscrow &&
     status.reads.individualEvidenceMode === "individual-hash" &&
+    status.reads.manifestEvidenceMode === "manifest-hash" &&
     status.reads.merkleEvidenceMode === "merkle-root" &&
     errors.length === 0;
 

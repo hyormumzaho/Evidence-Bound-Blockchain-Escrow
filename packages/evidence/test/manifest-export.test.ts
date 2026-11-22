@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { MAX_EVIDENCE_ITEMS } from "@evidencebound/shared";
 import { buildExport, parseExport, parseExportJson, serializeExport } from "../src/export.js";
 import { buildManifest, hashManifest } from "../src/manifest.js";
-import { toIndividualSubmit, toMerkleSubmit } from "../src/submit.js";
+import { toIndividualSubmit, toManifestSubmit, toMerkleSubmit } from "../src/submit.js";
 import { makeFileDelivery } from "./helpers.js";
 
 describe("manifest", () => {
@@ -87,6 +87,11 @@ describe("export round-trip", () => {
       root: evidenceExport.root,
       declaredCount: 3,
     });
+    expect(toManifestSubmit(parsed)).toEqual({
+      manifestHash: hashManifest(evidenceExport.manifest),
+      itemCount: 3,
+    });
+    expect(toManifestSubmit(parsed).manifestHash).not.toBe(evidenceExport.root);
   });
 
   it("rejects tampered manifestHash and tampered leafHash", () => {

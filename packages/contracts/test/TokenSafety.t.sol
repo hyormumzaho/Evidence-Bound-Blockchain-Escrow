@@ -6,6 +6,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {EscrowBase} from "../src/EscrowBase.sol";
 import {IndividualHashEscrow} from "../src/IndividualHashEscrow.sol";
+import {ManifestHashEscrow} from "../src/ManifestHashEscrow.sol";
 import {MerkleRootEscrow} from "../src/MerkleRootEscrow.sol";
 
 contract FeeOnTransferToken is ERC20, Ownable {
@@ -99,9 +100,10 @@ contract TokenSafetyTest is Test {
     bytes32 internal constant AGREEMENT = keccak256("token-safety");
     bytes32 internal constant TEMPLATE = keccak256("website-milestone-v1");
 
-    function test_FeeOnTransferCannotFundEitherVariant() public {
-        _fee(true);
-        _fee(false);
+    function test_FeeOnTransferCannotFundAnyVariant() public {
+        _fee(0);
+        _fee(1);
+        _fee(2);
     }
 
     function test_ReentrantWithdrawCannotTakeAnotherEscrow() public {
@@ -133,14 +135,15 @@ contract TokenSafetyTest is Test {
         assertEq(uint8(escrow.stateOf(locked)), 2);
     }
 
-    function _fee(bool individual) private {
-        address payer = makeAddr(individual ? "fee-payer-i" : "fee-payer-m");
-        address provider = makeAddr(individual ? "fee-provider-i" : "fee-provider-m");
-        address arbitrator = makeAddr(individual ? "fee-arbitrator-i" : "fee-arbitrator-m");
+    function _fee(uint8 mode) private {
+        address payer = makeAddr(string.concat("fee-payer-", vm.toString(mode)));
+        address provider = makeAddr(string.concat("fee-provider-", vm.toString(mode)));
+        address arbitrator = makeAddr(string.concat("fee-arbitrator-", vm.toString(mode)));
         FeeOnTransferToken token = new FeeOnTransferToken();
         EscrowBase escrow;
-        if (individual) escrow = new IndividualHashEscrow(address(token));
-        else escrow = new MerkleRootEscrow(address(token));
+        if (mode == 0) escrow = new IndividualHashEscrow(address(token));
+        else if (mode == 1) escrow = new MerkleRootEscrow(address(token));
+        else escrow = new ManifestHashEscrow(address(token));
         token.mint(payer, AMOUNT);
         vm.prank(payer);
         token.approve(address(escrow), AMOUNT);

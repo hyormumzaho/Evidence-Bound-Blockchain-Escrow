@@ -6,15 +6,13 @@ Full agreement text and evidence files stay off-chain. The chain stores a hash o
 
 ## Repository
 
-Phase 1 contains the contract package and the research documents. Later phases add the folders they need rather than empty applications.
-
 ```text
-apps/web/                         Phase 3. Not created yet.
-packages/contracts/               Phase 1. Solidity, Foundry tests, deploy, local demo.
-packages/evidence/                Phase 2. Canonical manifests and TypeScript Merkle helpers.
-packages/shared/                  Phase 2. Types shared by the web app and experiments.
-experiments/                      Phase 4. Scenarios, measurement, and analysis.
-docs/                             Protocol, threat model, evidence format, plan.
+apps/web/                         Local Next.js escrow UI through review, dispute, and withdrawal.
+packages/contracts/               Solidity, Foundry tests, deploy, local demo.
+packages/evidence/                Canonical manifests, hashes, and Merkle helpers.
+packages/shared/                  Types and constants shared by the web app and evidence library.
+experiments/                      Reserved for measurement. No result files yet.
+docs/                             Protocol, threat model, evidence format, plan, baseline audit.
 ```
 
 `packages/contracts` is a pnpm workspace package because it generates Merkle fixtures with `@openzeppelin/merkle-tree`. The contracts themselves compile with Foundry.
@@ -33,11 +31,15 @@ EscrowBase
 IndividualHashEscrow
   Stores every leaf hash for a delivery version.
 
+ManifestHashEscrow
+  Stores one keccak256 of the canonical manifest for a delivery version.
+  It does not store leaves and it does not check Merkle proofs.
+
 MerkleRootEscrow
   Stores one standard Merkle root and a provider-declared item count.
 ```
 
-Both escrow contracts use the same compiler settings in `packages/contracts/foundry.toml`: Solidity 0.8.38, optimizer on, 200 runs, `via_ir` off, Cancun. A gas comparison is not valid if those settings diverge.
+The three escrow contracts use the same compiler settings in `packages/contracts/foundry.toml`: Solidity 0.8.38, optimizer on, 200 runs, `via_ir` off, Cancun. A gas comparison is not valid if those settings diverge. The strategy is the deployed contract. The agreement hash binds `escrowContract` and does not carry a separate strategy field.
 
 ## Off-chain components
 

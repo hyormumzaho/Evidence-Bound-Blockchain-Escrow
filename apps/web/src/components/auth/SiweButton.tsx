@@ -36,7 +36,7 @@ export function SiweButton() {
   async function onSignIn() {
     setError(null);
     if (!address) {
-      setError("Connect MetaMask first.");
+      setError("Connect a wallet first.");
       return;
     }
     if (chainId !== ANVIL_CHAIN_ID) {
@@ -77,7 +77,7 @@ export function SiweButton() {
   if (!isConnected) {
     return (
       <section className="rounded-2xl border border-dashed border-[var(--border)] p-4 text-sm text-[var(--muted)]">
-        Connect MetaMask, then sign in with SIWE to save escrow metadata / files.
+        Connect a role, then sign in with SIWE to save escrow metadata and files.
       </section>
     );
   }

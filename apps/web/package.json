@@ -16,7 +16,7 @@
     "@evidencebound/evidence": "workspace:*",
     "@evidencebound/shared": "workspace:*",
     "@tanstack/react-query": "5.107.1",
-    "better-sqlite3": "11.10.0",
+    "better-sqlite3": "13.2.0",
     "drizzle-orm": "0.44.5",
     "next": "15.5.4",
     "react": "19.1.1",

@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db/client";
 import { confirmDeliverySubmission } from "@/lib/evidence/persist";
 import { confirmEvidenceBodySchema } from "@/lib/validation/evidence";
 import { assertSameOrigin, jsonError, requireSession, statusFromError } from "@/lib/http";
-import type { EscrowVariant } from "@/lib/chain/abis";
+import { isEscrowVariant } from "@/lib/chain/abis";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -16,10 +16,10 @@ export async function POST(request: Request, ctx: Ctx) {
   try {
     assertSameOrigin(request);
     const { variant: variantRaw, id: idRaw } = await ctx.params;
-    if (variantRaw !== "individual" && variantRaw !== "merkle") {
+    if (!isEscrowVariant(variantRaw)) {
       return jsonError("Invalid variant", 400);
     }
-    const variant = variantRaw as EscrowVariant;
+    const variant = variantRaw;
     const escrowId = Number(idRaw);
     if (!Number.isInteger(escrowId) || escrowId <= 0) {
       return jsonError("Invalid escrow id", 400);

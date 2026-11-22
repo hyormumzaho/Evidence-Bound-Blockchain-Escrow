@@ -50,6 +50,8 @@ export const OffchainStatus = {
   ContentHashMismatch: "ContentHashMismatch",
   InvalidExport: "InvalidExport",
   ManifestIntegrityFailed: "ManifestIntegrityFailed",
+  /** The authoritative chain commitment was not supplied. This is unknown, not invalid. */
+  ChainCommitmentUnavailable: "ChainCommitmentUnavailable",
 } as const;
 
 export type OffchainStatusCode = (typeof OffchainStatus)[keyof typeof OffchainStatus];

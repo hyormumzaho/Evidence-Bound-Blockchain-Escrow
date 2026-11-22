@@ -1,7 +1,7 @@
 import type { Address } from "viem";
-import { individualHashEscrowAbi, merkleRootEscrowAbi, mockUsdcAbi, type EscrowVariant, escrowAbi } from "./abis";
+import { mockUsdcAbi, type EscrowVariant, escrowAbi } from "./abis";
 import { createAnvilPublicClient, type AnvilPublicClient } from "./client";
-import { getDeploymentAddresses, requireAddress } from "./addresses";
+import { addressForVariant, getDeploymentAddresses, requireAddress } from "./addresses";
 
 export type EscrowView = {
   payer: Address;
@@ -27,11 +27,7 @@ function clientOrDefault(client?: AnvilPublicClient): AnvilPublicClient {
 
 export async function readTokenAddress(variant: EscrowVariant, client?: AnvilPublicClient): Promise<Address> {
   const c = clientOrDefault(client);
-  const addresses = getDeploymentAddresses();
-  const escrow =
-    variant === "individual"
-      ? requireAddress(addresses.individualHashEscrow, "IndividualHashEscrow")
-      : requireAddress(addresses.merkleRootEscrow, "MerkleRootEscrow");
+  const escrow = requireAddress(addressForVariant(variant), variant);
 
   return c.readContract({
     address: escrow,
@@ -42,11 +38,7 @@ export async function readTokenAddress(variant: EscrowVariant, client?: AnvilPub
 
 export async function readNextEscrowId(variant: EscrowVariant, client?: AnvilPublicClient): Promise<bigint> {
   const c = clientOrDefault(client);
-  const addresses = getDeploymentAddresses();
-  const escrow =
-    variant === "individual"
-      ? requireAddress(addresses.individualHashEscrow, "IndividualHashEscrow")
-      : requireAddress(addresses.merkleRootEscrow, "MerkleRootEscrow");
+  const escrow = requireAddress(addressForVariant(variant), variant);
 
   return c.readContract({
     address: escrow,
@@ -57,11 +49,7 @@ export async function readNextEscrowId(variant: EscrowVariant, client?: AnvilPub
 
 export async function readEvidenceMode(variant: EscrowVariant, client?: AnvilPublicClient): Promise<string> {
   const c = clientOrDefault(client);
-  const addresses = getDeploymentAddresses();
-  const escrow =
-    variant === "individual"
-      ? requireAddress(addresses.individualHashEscrow, "IndividualHashEscrow")
-      : requireAddress(addresses.merkleRootEscrow, "MerkleRootEscrow");
+  const escrow = requireAddress(addressForVariant(variant), variant);
 
   return c.readContract({
     address: escrow,
@@ -76,15 +64,11 @@ export async function readEscrowView(
   client?: AnvilPublicClient,
 ): Promise<EscrowView> {
   const c = clientOrDefault(client);
-  const addresses = getDeploymentAddresses();
-  const escrow =
-    variant === "individual"
-      ? requireAddress(addresses.individualHashEscrow, "IndividualHashEscrow")
-      : requireAddress(addresses.merkleRootEscrow, "MerkleRootEscrow");
+  const escrow = requireAddress(addressForVariant(variant), variant);
 
   const view = (await c.readContract({
     address: escrow,
-    abi: variant === "individual" ? individualHashEscrowAbi : merkleRootEscrowAbi,
+    abi: escrowAbi(variant),
     functionName: "getEscrow",
     args: [escrowId],
   })) as EscrowView;

@@ -96,7 +96,7 @@ export function NetworkGuard() {
           <dt className="text-xs opacity-70">Bytecode</dt>
           <dd className="font-mono text-xs">
             mUSDC={String(status.bytecode.mockUSDC)} individual={String(status.bytecode.individualHashEscrow)}{" "}
-            merkle={String(status.bytecode.merkleRootEscrow)}
+            manifest={String(status.bytecode.manifestHashEscrow)} merkle={String(status.bytecode.merkleRootEscrow)}
           </dd>
         </div>
       </dl>
@@ -110,6 +110,15 @@ export function NetworkGuard() {
               {status.reads.individualNextEscrowId ?? "—"}
               <br />
               token={status.reads.individualToken ?? "—"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs opacity-70">ManifestHashEscrow (public RPC)</dt>
+            <dd className="font-mono text-xs">
+              mode={status.reads.manifestEvidenceMode ?? "—"} nextId=
+              {status.reads.manifestNextEscrowId ?? "—"}
+              <br />
+              token={status.reads.manifestToken ?? "—"}
             </dd>
           </div>
           <div>
@@ -148,7 +157,7 @@ export function NetworkGuard() {
         <p className="mt-2 font-mono text-xs break-all">
           {isConnected
             ? `${address} · wallet chain ${chainId ?? "—"} · expected ${ANVIL_CHAIN_ID}`
-            : "Connect MetaMask to verify wallet chainId 31337."}
+            : "Connect a local role or MetaMask. Expected chain 31337."}
         </p>
         {walletWrongNetwork && (
           <button
@@ -164,7 +173,8 @@ export function NetworkGuard() {
       </div>
 
       <p className="mt-4 text-xs opacity-80">
-        Public RPC checks stay on the Next.js API (no private keys). Wallet chain comes from MetaMask via wagmi.
+        Public RPC checks stay on the Next.js API. Local role buttons use Anvil's unlocked accounts. MetaMask can
+        still sign if you import those accounts yourself.
       </p>
     </section>
   );

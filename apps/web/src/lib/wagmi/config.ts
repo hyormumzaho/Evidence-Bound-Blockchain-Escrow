@@ -2,11 +2,13 @@
 
 import { http, createConfig, createStorage, cookieStorage, injected } from "wagmi";
 import { anvil, getRpcUrl } from "@/lib/chain/config";
+import { ANVIL_ROLES, anvilAccountConnector } from "@/lib/wagmi/anvil-accounts";
 
-/** MetaMask (injected) only — local Anvil research UI. No WalletConnect. */
+/** Local Anvil role accounts, plus MetaMask. No WalletConnect. */
 export const wagmiConfig = createConfig({
   chains: [anvil],
   connectors: [
+    ...ANVIL_ROLES.map((role) => anvilAccountConnector(role)),
     injected({
       target: "metaMask",
       shimDisconnect: true,

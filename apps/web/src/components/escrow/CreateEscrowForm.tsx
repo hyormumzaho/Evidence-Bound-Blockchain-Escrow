@@ -20,6 +20,7 @@ import { formatWalletError } from "@/lib/wagmi/errors";
 type ChainAddrs = {
   mockUSDC: Address | null;
   individualHashEscrow: Address | null;
+  manifestHashEscrow: Address | null;
   merkleRootEscrow: Address | null;
 };
 
@@ -34,9 +35,9 @@ export function CreateEscrowForm() {
     useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash: txHash });
 
-  const [variant, setVariant] = useState<EscrowVariant>("individual");
-  const [provider, setProvider] = useState("");
-  const [arbitrator, setArbitrator] = useState("");
+  const [variant, setVariant] = useState<EscrowVariant>("manifest");
+  const [provider, setProvider] = useState("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
+  const [arbitrator, setArbitrator] = useState("0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC");
   const [amountHuman, setAmountHuman] = useState("100");
   const [deliveryHours, setDeliveryHours] = useState("72");
   const [reviewHours, setReviewHours] = useState("24");
@@ -109,7 +110,9 @@ export function CreateEscrowForm() {
 
   const escrowContract = useMemo(() => {
     if (!addresses) return null;
-    return variant === "individual" ? addresses.individualHashEscrow : addresses.merkleRootEscrow;
+    if (variant === "individual") return addresses.individualHashEscrow;
+    if (variant === "manifest") return addresses.manifestHashEscrow;
+    return addresses.merkleRootEscrow;
   }, [addresses, variant]);
 
   function onPreview(e: FormEvent) {
@@ -212,8 +215,9 @@ export function CreateEscrowForm() {
             value={variant}
             onChange={(e) => setVariant(e.target.value as EscrowVariant)}
           >
-            <option value="individual">IndividualHashEscrow</option>
-            <option value="merkle">MerkleRootEscrow</option>
+            <option value="individual">Individual hashes</option>
+            <option value="manifest">Canonical manifest hash</option>
+            <option value="merkle">Merkle root</option>
           </select>
         </label>
 
@@ -335,7 +339,7 @@ export function CreateEscrowForm() {
             disabled={isPending || receipt.isLoading || persisting || !!donePath}
             className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
-            Confirm createEscrow in MetaMask
+            Confirm createEscrow
           </button>
           <TxStatus
             status={txPhase}

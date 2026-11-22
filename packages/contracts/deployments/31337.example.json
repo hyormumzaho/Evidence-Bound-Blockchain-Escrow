@@ -4,6 +4,7 @@
   "rpcUrl": "http://127.0.0.1:8545",
   "mockUSDC": null,
   "individualHashEscrow": null,
+  "manifestHashEscrow": null,
   "merkleRootEscrow": null,
   "payer": null,
   "mintAmount": null,

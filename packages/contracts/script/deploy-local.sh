@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy MockUSDC + both escrows to local Anvil (31337) and write deployments JSON.
+# Deploy MockUSDC + the three escrows to local Anvil (31337) and write deployments JSON.
 # Does not put private keys into the Next.js app. Uses Foundry env vars only.
 set -euo pipefail
 
@@ -52,8 +52,9 @@ extract() {
 
 TOKEN="$(extract MockUSDC)"
 INDIVIDUAL="$(extract IndividualHashEscrow)"
+MANIFEST="$(extract ManifestHashEscrow)"
 MERKLE="$(extract MerkleRootEscrow)"
-if [[ -z "$TOKEN" || -z "$INDIVIDUAL" || -z "$MERKLE" ]]; then
+if [[ -z "$TOKEN" || -z "$INDIVIDUAL" || -z "$MANIFEST" || -z "$MERKLE" ]]; then
   echo "Could not parse deployed addresses from forge output." >&2
   exit 1
 fi
@@ -62,15 +63,16 @@ DEPLOYED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 BLOCK="$(cast block-number --rpc-url "$RPC_URL" | awk '{print $1}')"
 
 JSON_DOC="$(
-  python3 - "$TOKEN" "$INDIVIDUAL" "$MERKLE" "$PAYER_ADDRESS" "$MINT_AMOUNT" "$DEPLOYED_AT" "$BLOCK" "$RPC_URL" <<'PY'
+  python3 - "$TOKEN" "$INDIVIDUAL" "$MANIFEST" "$MERKLE" "$PAYER_ADDRESS" "$MINT_AMOUNT" "$DEPLOYED_AT" "$BLOCK" "$RPC_URL" <<'PY'
 import json, sys
-token, individual, merkle, payer, mint, deployed_at, block, rpc = sys.argv[1:]
+token, individual, manifest, merkle, payer, mint, deployed_at, block, rpc = sys.argv[1:]
 doc = {
     "schema": "evidencebound.deployments.v1",
     "chainId": 31337,
     "rpcUrl": rpc,
     "mockUSDC": token,
     "individualHashEscrow": individual,
+    "manifestHashEscrow": manifest,
     "merkleRootEscrow": merkle,
     "payer": payer,
     "mintAmount": mint,
@@ -91,4 +93,5 @@ echo "NEXT_PUBLIC_CHAIN_ID=31337"
 echo "NEXT_PUBLIC_RPC_URL=$RPC_URL"
 echo "NEXT_PUBLIC_MOCK_USDC=$TOKEN"
 echo "NEXT_PUBLIC_INDIVIDUAL_ESCROW=$INDIVIDUAL"
+echo "NEXT_PUBLIC_MANIFEST_ESCROW=$MANIFEST"
 echo "NEXT_PUBLIC_MERKLE_ESCROW=$MERKLE"

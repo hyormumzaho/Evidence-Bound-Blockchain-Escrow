@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Address, Hex } from "viem";
 import { StatusBadge } from "./StatusBadge";
 import { EscrowActions } from "./EscrowActions";
 import { EvidenceSubmission } from "./EvidenceSubmission";
 import { escrowStateName } from "@/lib/escrow/states";
-import type { EscrowVariant } from "@/lib/chain/abis";
+import { evidenceStrategyLabel, isEscrowVariant, type EscrowVariant } from "@/lib/chain/abis";
 import { formatMockUsdc } from "@/lib/escrow/amount";
 
 type RoomPayload = {
@@ -41,10 +41,11 @@ export function EscrowRoom({ variant, id }: { variant: string; id: string }) {
   const [data, setData] = useState<RoomPayload | null>(null);
   const [token, setToken] = useState<Address | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const loaded = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
+    async function load() {
       try {
         const [roomRes, statusRes] = await Promise.all([
           fetch(`/api/escrows/${variant}/${id}`),
@@ -53,19 +54,24 @@ export function EscrowRoom({ variant, id }: { variant: string; id: string }) {
         const body = await roomRes.json();
         const status = await statusRes.json();
         if (!roomRes.ok) {
-          if (!cancelled) setError(body.error ?? "Failed to load");
+          if (!cancelled && !loaded.current) setError(body.error ?? "Failed to load");
           return;
         }
+        loaded.current = true;
         if (!cancelled) {
+          setError(null);
           setData(body as RoomPayload);
           setToken((status.addresses?.mockUSDC as Address | null) ?? null);
         }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load");
       }
-    })();
+    }
+    void load();
+    const timer = setInterval(() => void load(), 4000);
     return () => {
       cancelled = true;
+      clearInterval(timer);
     };
   }, [variant, id]);
 
@@ -93,7 +99,7 @@ export function EscrowRoom({ variant, id }: { variant: string; id: string }) {
     data.onChain && data.onChain.amount !== undefined ? BigInt(data.onChain.amount as string | number | bigint) : null;
 
   const canShowActions =
-    (variant === "individual" || variant === "merkle") &&
+    isEscrowVariant(variant) &&
     data.metadata.escrowId !== null &&
     Boolean(data.metadata.contractAddress) &&
     Boolean(token) &&
@@ -104,11 +110,17 @@ export function EscrowRoom({ variant, id }: { variant: string; id: string }) {
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-2xl font-semibold">
-            {data.metadata.variant} #{data.metadata.escrowId}
+            Escrow #{data.metadata.escrowId}
           </h1>
           <StatusBadge state={onChainState} />
         </div>
-        <p className="mt-2 text-sm text-[var(--muted)]">{data.note}</p>
+        <p className="mt-2 text-sm text-[var(--muted)]">
+          Evidence strategy:{" "}
+          {isEscrowVariant(data.metadata.variant)
+            ? evidenceStrategyLabel(data.metadata.variant)
+            : data.metadata.variant}
+          . {data.note}
+        </p>
         <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-[var(--muted)]">Contract</dt>

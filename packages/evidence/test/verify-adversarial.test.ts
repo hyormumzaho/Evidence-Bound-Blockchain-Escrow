@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EvidenceStatus, OffchainStatus } from "@evidencebound/shared";
 import { buildLeafFields, hashEvidenceLeaf } from "../src/leaf.js";
-import { verifyExportLeaf, verifyLeafMembership } from "../src/verify-offchain.js";
+import { verifyExportLeaf, verifyLeafMembership, verifyManifestCommitment } from "../src/verify-offchain.js";
 import { makeFileDelivery } from "./helpers.js";
 import { EVIDENCE_TYPE_LABELS } from "@evidencebound/shared";
 import { hashFileBytes } from "../src/content.js";
@@ -157,5 +157,29 @@ describe("adversarial off-chain verification", () => {
     });
     expect(fields.evidenceType).toMatch(/^0x[0-9a-f]{64}$/);
     expect(hashEvidenceLeaf(fields)).toMatch(/^0x[0-9a-f]{64}$/);
+  });
+
+  it("accepts a manifest that matches the stored hash and rejects a different one", () => {
+    const { manifest, evidenceExport } = makeFileDelivery({ files: [new Uint8Array([4, 5])] });
+    expect(verifyManifestCommitment({ manifest, storedManifestHash: evidenceExport.manifestHash })).toEqual({
+      ok: true,
+      status: EvidenceStatus.Valid,
+    });
+    const wrong = verifyManifestCommitment({
+      manifest,
+      storedManifestHash: evidenceExport.root,
+    });
+    expect(wrong.ok).toBe(false);
+    if (!wrong.ok) expect(wrong.status).toBe(OffchainStatus.ManifestIntegrityFailed);
+  });
+
+  it("reports missing manifest and missing chain hash as unverified", () => {
+    const { manifest, evidenceExport } = makeFileDelivery({ files: [new Uint8Array([6])] });
+    const missingManifest = verifyManifestCommitment({ storedManifestHash: evidenceExport.manifestHash });
+    const missingChain = verifyManifestCommitment({ manifest });
+    expect(missingManifest.ok).toBe(false);
+    expect(missingChain.ok).toBe(false);
+    if (!missingManifest.ok) expect(missingManifest.status).toBe(OffchainStatus.ManifestMissing);
+    if (!missingChain.ok) expect(missingChain.status).toBe(OffchainStatus.ChainCommitmentUnavailable);
   });
 });

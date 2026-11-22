@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { ANVIL_ROLES } from "@/lib/wagmi/anvil-accounts";
 import { ANVIL_CHAIN_ID } from "@/lib/chain/config";
 import { formatWalletError, isMetaMaskInstalled } from "@/lib/wagmi/errors";
 import { switchToAnvil } from "@/lib/wagmi/switch-anvil";
@@ -14,7 +15,7 @@ function shortAddress(address: string): string {
 export function ConnectButton() {
   const { address, isConnected, isConnecting, chainId, status } = useAccount();
   const { connect, connectors, isPending, error: connectError, reset } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { disconnectAsync } = useDisconnect();
   const [actionError, setActionError] = useState<string | null>(null);
   const [switching, setSwitching] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -27,9 +28,29 @@ export function ConnectButton() {
     if (connectError) setActionError(formatWalletError(connectError));
   }, [connectError]);
 
-  const metaMaskConnector = connectors.find((c) => c.id === "metaMask" || c.name.toLowerCase().includes("metamask")) ?? connectors[0];
+  const metaMaskConnector = connectors.find((c) => c.id === "metaMask" || c.name.toLowerCase().includes("metamask"));
+  const roleConnectors = ANVIL_ROLES.map((role) => ({
+    role,
+    connector: connectors.find((item) => item.id === role.id),
+  }));
   const wrongNetwork = isConnected && chainId !== undefined && chainId !== ANVIL_CHAIN_ID;
   const installed = mounted ? isMetaMaskInstalled() : true;
+
+  async function onRole(connector: (typeof connectors)[number] | undefined) {
+    setActionError(null);
+    reset();
+    if (!connector) {
+      setActionError("Local Anvil account is not configured.");
+      return;
+    }
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      if (isConnected) await disconnectAsync();
+      connect({ connector, chainId: ANVIL_CHAIN_ID });
+    } catch (err) {
+      setActionError(formatWalletError(err));
+    }
+  }
 
   async function onConnect() {
     setActionError(null);
@@ -60,7 +81,7 @@ export function ConnectButton() {
   function onDisconnect() {
     setActionError(null);
     reset();
-    disconnect();
+    void disconnectAsync();
   }
 
   if (!mounted) {
@@ -77,7 +98,8 @@ export function ConnectButton() {
         <div>
           <h2 className="font-medium text-[var(--fg)]">Wallet</h2>
           <p className="mt-1 text-xs text-[var(--muted)]">
-            MetaMask → Anvil <span className="font-mono">{ANVIL_CHAIN_ID}</span>. No keys on the server.
+            Use a local Anvil role, or MetaMask on chain <span className="font-mono">{ANVIL_CHAIN_ID}</span>. The
+            server never holds a key.
           </p>
         </div>
         <span className="font-mono text-xs uppercase tracking-wide text-[var(--muted)]">
@@ -86,12 +108,30 @@ export function ConnectButton() {
       </div>
 
       {!installed && (
-        <p className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-950">
-          MetaMask extension not detected. Install it, then reload this page.
+        <p className="mt-4 text-xs text-[var(--muted)]">
+          MetaMask is optional. Client, Provider, and Arbitrator use Anvil&apos;s unlocked accounts.
         </p>
       )}
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
+        {roleConnectors.map(({ role, connector }) => {
+          const active = isConnected && address?.toLowerCase() === role.address.toLowerCase();
+          return (
+            <button
+              key={role.id}
+              type="button"
+              onClick={() => void onRole(connector)}
+              disabled={isPending || isConnecting}
+              className={`rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50 ${
+                active
+                  ? "bg-[var(--accent)] text-white"
+                  : "border border-[var(--border)] bg-white text-[var(--fg)]"
+              }`}
+            >
+              {role.name}
+            </button>
+          );
+        })}
         {!isConnected ? (
           <button
             type="button"

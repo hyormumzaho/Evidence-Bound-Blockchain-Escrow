@@ -1,6 +1,6 @@
 # Protocol specification
 
-Status: Phase 1 prototype. This is the rule set implemented in `EscrowBase`, `IndividualHashEscrow`, and `MerkleRootEscrow`.
+Status: prototype rule set implemented in `EscrowBase`, `IndividualHashEscrow`, `ManifestHashEscrow`, and `MerkleRootEscrow`.
 
 The contract holds funds, checks who may act, changes state, and records commitments. It does not decide whether delivered work is acceptable. A successful evidence check does not prove quality, authorship, ownership, repository access, file availability, or the original creation time of a file. An on-chain commitment establishes when the commitment was mined.
 
@@ -96,7 +96,9 @@ Individual-hash submission stores the calldata hashes in order and rejects `byte
 
 Merkle submission stores the provider's root and a `declaredItemCount`. The root must be nonzero. The count must be from 1 to 100. The count is not authenticated by the root. A single-item standard tree has root equal to the leaf hash, and verification of that leaf succeeds even if the declared count is larger. Clients must not treat the count as proof of how many artifacts exist.
 
-Neither submission function checks file bytes. A provider can commit to hashes that do not match the files later shown to the payer. The payer sees that during review. Verification then returns not-a-member.
+Manifest-hash submission stores one keccak256 of the canonical manifest. The hash must be nonzero. The function also takes an `itemCount` from 1 to 100 because the shared delivery event carries a count. That count is not stored and is not authenticated by the hash. A provider can submit the hash of a one-item manifest with a count of 50. The authoritative item list is the manifest whose canonical hash matches `deliveryManifestHash`. `verifyManifestHash` compares a candidate hash with the stored hash. `NotMember` on this variant means the candidate is not the stored hash. It is not a Merkle proof result. The contract does not inspect manifest JSON.
+
+Neither the individual nor the Merkle submission function checks file bytes. A provider can commit to hashes that do not match the files later shown to the payer. The payer sees that during review. Verification then returns not-a-member. The manifest variant has the same limitation: the stored hash matches whatever canonical JSON the provider chose to hash.
 
 ## Review, dispute, and the contradictory requirement
 
@@ -150,8 +152,10 @@ Binding checks, in order:
 4. `escrowContract` equals this contract, else `WrongContract`.
 5. The leaf's escrow id equals the function argument, else `WrongEscrow`.
 6. The delivery version is between 1 and the current version, else `UnknownDelivery`.
-7. The leaf hash is in the stored list at that item index, or the Merkle proof matches the stored root, else `NotMember`.
+7. For the individual-hash variant, the leaf hash is in the stored list at that item index. For the Merkle variant, the proof matches the stored root. Otherwise `NotMember`.
 8. Otherwise `Valid`.
+
+Manifest-hash verification is a separate view, `verifyManifestHash`. It does not take a leaf or a proof. Unknown escrow, unknown delivery, and a mismatched hash use the same status codes, with `NotMember` meaning hash mismatch. Artifact bytes are checked off-chain after the manifest hash matches the chain.
 
 The first failing check wins. Recommended evidence type strings, which are labels rather than an allowlist:
 
